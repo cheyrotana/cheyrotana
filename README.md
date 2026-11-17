@@ -1,6 +1,6 @@
 # Hi, I'm Chey Rotana
 
-Computer Science student (Year 3) at **CADT** — Cambodia Academy of Digital Technology, based in **Phnom Penh, Cambodia**.
+Computer Science student (Year 4) at **CADT** — Cambodia Academy of Digital Technology, based in **Phnom Penh, Cambodia**.
 I build mobile and web applications with **Flutter, React and TypeScript**, and I love creating useful apps that solve real-world problems.
 
 🌐 **Portfolio:** [cheyrotana-portfolio-v1.vercel.app](https://cheyrotana-portfolio-v1.vercel.app) &nbsp;·&nbsp; 💼 **LinkedIn:** [Rotana Chey](https://www.linkedin.com/in/rotana-chey-92b572396/)
