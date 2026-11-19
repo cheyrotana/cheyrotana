@@ -1,50 +1,73 @@
-# Hi, I'm Chey Rotana
+<p align="center">
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/angkor-banner.svg" width="100%" alt="Hey, I'm Rotana. Mobile and full-stack developer" /></a>
+</p>
 
-Computer Science student (Year 4) at **CADT** — Cambodia Academy of Digital Technology, based in **Phnom Penh, Cambodia**.
-I build mobile and web applications with **Flutter, React and TypeScript**, and I love creating useful apps that solve real-world problems.
+<p align="center">
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Portfolio-cheyrotana--portfolio-f0c674?style=for-the-badge&labelColor=0d1117" alt="Portfolio" /></a>
+</p>
+<p align="center">
+  <img src="https://u8views.com/api/v1/github/profiles/169222717/views/total-count.svg" alt="Profile views" />
+</p>
 
-🌐 **Portfolio:** [cheyrotana-portfolio-v1.vercel.app](https://cheyrotana-portfolio-v1.vercel.app) &nbsp;·&nbsp; 💼 **LinkedIn:** [Rotana Chey](https://www.linkedin.com/in/rotana-chey-92b572396/)
+<div align="center">
 
----
+<h3 align="center">About me</h3>
 
-## 🛠️ Tech Stack
+<p align="center">
+  I'm a mobile and full-stack developer and a final-year Computer Science student at CADT,<br/>
+  currently a developer intern at MLMUPC in Phnom Penh, Cambodia.<br/>
+  I build cross-platform apps with Flutter, web apps with React and Angular,<br/>
+  and the NestJS and Express APIs behind them, and I love creating<br/>
+  useful apps that solve real-world problems.
+</p>
 
-**Mobile & Frontend**
-![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat-square&logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat-square&logo=dart&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+<h3 align="center">Tech stack</h3>
 
-**Backend & Data**
-![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=nodedotjs&logoColor=white)
-![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
-![Sequelize](https://img.shields.io/badge/Sequelize-52B0E7?style=flat-square&logo=sequelize&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)
+<table>
+  <tr><td align="center"><b>Languages</b></td><td align="center"><img src="https://skillicons.dev/icons?i=dart,ts,js,py,cs,cpp&theme=dark" height="40" /></td></tr>
+  <tr><td align="center"><b>Mobile & Frontend</b></td><td align="center"><img src="https://skillicons.dev/icons?i=flutter,react,angular,tailwind,unity&theme=dark" height="40" /></td></tr>
+  <tr><td align="center"><b>Backend & Data</b></td><td align="center"><img src="https://skillicons.dev/icons?i=nodejs,nestjs,express,postgres,firebase&theme=dark" height="40" /></td></tr>
+  <tr><td align="center"><b>Cloud, Hardware & Tools</b></td><td align="center"><img src="https://skillicons.dev/icons?i=aws,terraform,raspberrypi,git,github,gitlab,figma,vercel&theme=dark" height="40" /></td></tr>
+</table>
 
-**Games, Cloud & Tools**
-![C#](https://img.shields.io/badge/C%23-512BD4?style=flat-square&logo=dotnet&logoColor=white)
-![Unity](https://img.shields.io/badge/Unity-000000?style=flat-square&logo=unity&logoColor=white)
-![C++](https://img.shields.io/badge/C++-00599C?style=flat-square&logo=cplusplus&logoColor=white)
-![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white)
-![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
-![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white)
+</div>
 
----
+<h3 align="center">Featured work</h3>
 
-## 🚀 Featured Projects
+<div align="center">
+<table>
+  <tr>
+    <td align="center" width="50%"><a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/projects/hrm.jpg" /></a><br/><b>HRM System</b>: government HR platform for attendance, leave and officer records at MLMUPC and NIS<br/><sub>Flutter · Angular · NestJS · PostgreSQL</sub></td>
+    <td align="center" width="50%"><a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/projects/phumiyerng.jpg" /></a><br/><b>PhumiYerng</b>: marketplace and community-tourism app for rural LASED III communities<br/><sub>Flutter · Dart · NestJS · Socket.IO</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/projects/face-scan.jpg" /></a><br/><b>Face Scan Connector</b>: pairs Raspberry Pi face scanners with HRM so every scan becomes an attendance record<br/><sub>Python · Raspberry Pi · NestJS · Angular</sub></td>
+    <td align="center"><a href="https://github.com/Ra-Fat/UniFinder"><img src="assets/projects/unifinder.jpg" /></a><br/><b>UniFinder</b>: offline app that helps rural students find their best-fit university majors<br/><sub>Flutter · Dart · go_router</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/Zorng/ModulaFrontend"><img src="assets/projects/modula.jpg" /></a><br/><b>Modula</b>: modular point-of-sale system for small food & beverage businesses<br/><sub>Flutter · Riverpod · Express · PostgreSQL</sub></td>
+    <td align="center"><a href="https://github.com/Ra-Fat/Frost-Guard"><img src="assets/projects/frost-guard.jpg" /></a><br/><b>Frost Guard</b>: tower defense game set in an endless, magical winter<br/><sub>Unity · C#</sub></td>
+  </tr>
+</table>
+</div>
 
-| Project | What it is | My role |
-|---|---|---|
-| **Modula** · [Backend](https://github.com/Zorng/ModulaBackend) · [Frontend](https://github.com/Zorng/ModulaFrontend) · [Demo](https://youtu.be/JI82H8Xl9lM) | Modular POS system that helps small food & beverage businesses run daily operations | **Full-stack:** built the inventory, cash-session and menu modules (Express + TypeScript + PostgreSQL), and the staff-management and sales screens in Flutter |
-| **UniFinder** · [Repo](https://github.com/Ra-Fat/UniFinder) · [Demo](https://youtu.be/luuqpryOJ3g) | Offline Flutter app that helps students in rural Cambodia find their best-fit university majors | **Frontend developer:** home, career, dream and compare screens, recommendations, repository/service layer and tests |
-| **Frost Guard** · [Repo](https://github.com/Ra-Fat/Frost-Guard) · [Demo](https://youtu.be/mIUvftuUees) | Unity tower-defense game: defend your castle from waves of enemies in an endless winter world | **Game developer:** player economy and turret pricing, damage/lives/wave UI, win/lose conditions, bug fixing |
-| **Velo** · [Repo](https://github.com/Zorng/g4_t1_velo_app) | Bike-sharing mobile app (Flutter + Firebase, MVVM) | Built the **bike booking flow**: booking UI, bike-slot/booking/pass repositories, bike-status updates |
-| **Portfolio** · [Repo](https://github.com/cheyrotana/Portfolio) · [Live](https://cheyrotana-portfolio-v1.vercel.app) | My personal portfolio website | Solo project — React, TypeScript, Tailwind, Framer Motion, deployed on Vercel |
-| **BlaBlaCar-style ride app** · [Repo](https://github.com/cheyrotana/BLABLACAR) | Ride-sharing app UI in Flutter | Solo project — ride search form, location picker with search, reusable button components |
+<p align="center"><a href="https://cheyrotana-portfolio-v1.vercel.app">See all my projects →</a></p>
 
-### Other team work
-- **[Cloud Project](https://github.com/R-Seyhak/G4-Group7-Cloud-Project)** — Terraform root module for the full AWS infrastructure, plus CloudWatch monitoring setup
-- **[Sleep & Academic Performance](https://github.com/Vorak-Tong/Sleep_and_Academic_Performance_DS_Project)** — data-science project; relationship analysis and model evaluation & comparison notebooks
+<h3 align="center">Stats</h3>
+
+<p align="center">
+  <img src="https://streak-stats.demolab.com/?user=cheyrotana&theme=dark&hide_border=true&background=0d1117&ring=f0c674&fire=f0c674&currStreakLabel=f0c674" height="165" alt="GitHub streak" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=cheyrotana&layout=compact&hide_border=true&bg_color=0d1117&title_color=f0c674&text_color=c9d1d9" height="165" alt="Top languages" />
+</p>
+
+<h3 align="center">Let's connect</h3>
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/rotana-chey-92b572396/"><img src="https://img.shields.io/badge/LinkedIn-0d1117?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2YwYzY3NCIgZD0iTTIwLjQ1IDIwLjQ1aC0zLjU2di01LjU3YzAtMS4zMy0uMDItMy4wNC0xLjg1LTMuMDQtMS44NiAwLTIuMTQgMS40NS0yLjE0IDIuOTR2NS42N0g5LjM1VjloMy40MXYxLjU2aC4wNWMuNDgtLjkgMS42NC0xLjg1IDMuMzctMS44NSAzLjYgMCA0LjI3IDIuMzcgNC4yNyA1LjQ2djYuMjh6TTUuMzQgNy40M2EyLjA2IDIuMDYgMCAxIDEgMC00LjEzIDIuMDYgMi4wNiAwIDAgMSAwIDQuMTN6TTcuMTIgMjAuNDVIMy41NlY5aDMuNTZ2MTEuNDV6TTIyLjIyIDBIMS43N0MuNzkgMCAwIC43NyAwIDEuNzN2MjAuNTRDMCAyMy4yMy43OSAyNCAxLjc3IDI0aDIwLjQ1Yy45OCAwIDEuNzgtLjc3IDEuNzgtMS43M1YxLjczQzI0IC43NyAyMy4yIDAgMjIuMjIgMHoiLz48L3N2Zz4%3D" /></a>
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Portfolio-0d1117?style=for-the-badge&logo=vercel&logoColor=f0c674" /></a>
+  <a href="https://github.com/cheyrotana"><img src="https://img.shields.io/badge/GitHub-0d1117?style=for-the-badge&logo=github&logoColor=f0c674" /></a>
+</p>
+
+<p align="center">
+  <img src="assets/angkor-footer.svg" width="100%" alt="" />
+</p>
