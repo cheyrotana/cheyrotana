@@ -10,8 +10,8 @@
 <p align="center"><img src="assets/stops/1-about.svg" height="46" alt="1. About" /></p>
 
 <p align="center">
-  I'm a mobile and full-stack developer and a final-year Computer Science student at CADT,<br/>
-  currently a developer intern at MLMUPC in Phnom Penh, Cambodia.<br/>
+  I'm a fourth-year Computer Science student at the Cambodia Academy of Digital Technology. 
+  During my three-month internship with the Digital Revolution team at MLMUPC.<br/>
   I build cross-platform apps with Flutter, web apps with React and Angular,<br/>
   and the NestJS and Express APIs behind them, and I love creating<br/>
   useful apps that solve real-world problems.
