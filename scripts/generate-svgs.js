@@ -1,208 +1,205 @@
 // Usage: node scripts/generate-svgs.js assets
-// Edit the colours, name, taglines, stops or journey below, re-run, then commit the changed files in assets/.
-// Generates the Metro-themed profile SVGs: banner, footer, section signs, journey line.
+// Generates the Persona-themed profile SVGs (banner, footer, section signs, journey line),
+// matching the Persona theme of the portfolio (cheyrotana/Portfolio). Edit the text or colours
+// below, re-run, then commit the changed files in assets/.
 const fs = require('fs');
 const path = require('path');
-const OUT = process.argv[2];
+const OUT = process.argv[2] || 'assets';
 fs.mkdirSync(path.join(OUT, 'stops'), { recursive: true });
 
-// Portfolio "Metro" night palette
-const C = {
-  sky0: '#050a1c', sky1: '#0a1230', sky2: '#121a3a',
-  bg: '#10131b', surface: '#1b1f2b', line: '#2e3445',
-  fg: '#f1ede4', muted: '#aaa49a', orange: '#f06a1f', orange2: '#ff8a3d', amber: '#f5b82e', win: '#f5c35a',
-  board: '#141414', tile: '#232323',
+// Portfolio Persona palette
+const RED = '#e60012', BLACK = '#0b0b0b', WHITE = '#ffffff', MUTED = '#d9d2d2', WARM = '#fff3c4';
+const F = {
+  anton: "Anton, Impact, 'Arial Narrow Bold', sans-serif",
+  archivo: "'Archivo Black', 'Arial Black', sans-serif",
+  playfair: "'Playfair Display', Georgia, 'Times New Roman', serif",
+  bebas: "'Bebas Neue', Impact, sans-serif",
+  abril: "'Abril Fatface', Georgia, serif",
+  alfa: "'Alfa Slab One', Rockwell, 'Courier New', serif",
+  body: "Inter, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif",
+  mono: "'JetBrains Mono', Consolas, Menlo, monospace",
 };
-const MONO = "'JetBrains Mono', 'Fira Code', Consolas, Menlo, monospace";
-const SANS = "Overpass, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 const r1 = n => Math.round(n * 10) / 10;
 const esc = s => s.replace(/&/g, '&amp;');
-let seed = 7;
-const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const hash = n => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
 
-// ---------- transit line geometry ----------
-const lineY = x => 330 + 10 * Math.sin(x / 170) + 6 * Math.sin(x / 63);
-const linePath = (x0, x1, f = lineY) => {
-  let d = `M${x0} ${r1(f(x0))}`;
-  for (let x = x0 + 10; x <= x1; x += 10) d += `L${x} ${r1(f(x))}`;
-  return d;
-};
+// ---------- shared pieces ----------
+const STAR = 'M10 0L12.2 7.8L20 10L12.2 12.2L10 20L7.8 12.2L0 10L7.8 7.8Z';
+const star = (x, y, size, fill, inner = '') =>
+  `<path d="${STAR}" transform="translate(${r1(x - size / 2)} ${r1(y - size / 2)}) scale(${r1(size / 20 * 100) / 100})" fill="${fill}"${inner ? `>${inner}</path>` : '/>'}`;
+
+const BURST = Array.from({ length: 32 }, (_, i) => {
+  const a = (i / 32) * Math.PI * 2;
+  const r = i % 2 === 0 ? 50 : 33 + ((i * 37) % 10) * 0.9;
+  return `${(50 + r * Math.cos(a)).toFixed(1)},${(50 + r * Math.sin(a)).toFixed(1)}`;
+}).join(' ');
+
+// Ransom-note tiles, same pattern as the portfolio's <Ransom> component
+const TILTS = [-7, 4, -3, 6, -5, 2, 8, -2];
+const VARIANTS = [
+  [WHITE, BLACK, false], [BLACK, WHITE, true], [RED, WHITE, false],
+  [WHITE, RED, false], [BLACK, RED, true], [RED, BLACK, false],
+];
+const FONTS = [
+  [F.anton, 400, 1, 0.5], [F.archivo, 900, 0.86, 0.72], [F.playfair, 900, 1, 0.7],
+  [F.bebas, 400, 1.08, 0.46], [F.abril, 400, 1, 0.68], [F.alfa, 400, 0.9, 0.72],
+];
+function ransomWord(word, x0, yMid, size, seed, startIdx, beginAt) {
+  let s = '', x = x0, i = startIdx;
+  for (const ch of word) {
+    const [bg, fg, outline] = VARIANTS[(i * 5 + seed * 2) % 6];
+    const [font, weight, fScale, wFactor] = FONTS[(i * 4 + seed) % 6];
+    const sc = 0.86 + ((i * 7 + seed * 3) % 5) * 0.06;
+    const fs_ = size * sc * fScale;
+    const cf = 'MWHNOACQDGRUV'.includes(ch) ? 1.18 : 'IJ'.includes(ch) ? 0.6 : 1;
+    const w = Math.max(fs_ * wFactor * cf + size * 0.26, size * 0.62), h = size * sc * 1.12;
+    const dy = ((i * 13 + seed * 7) % 4) * 0.035 * size;
+    const tilt = TILTS[(i + seed) % TILTS.length];
+    const cx = x + w / 2, cy = yMid + dy;
+    const t = r1((beginAt + i * 0.07) * 100) / 100;
+    s += `  <g transform="translate(${r1(cx)} ${r1(cy)}) rotate(${tilt})"><g opacity="0">`
+      + `<rect x="${r1(-w / 2 + 5)}" y="${r1(-h / 2 + 6)}" width="${r1(w)}" height="${r1(h)}" fill="${BLACK}"/>`
+      + `<rect x="${r1(-w / 2)}" y="${r1(-h / 2)}" width="${r1(w)}" height="${r1(h)}" fill="${bg}" stroke="${BLACK}" stroke-width="2"/>`
+      + (outline ? `<rect x="${r1(-w / 2 + size * 0.06)}" y="${r1(-h / 2 + size * 0.06)}" width="${r1(w - size * 0.12)}" height="${r1(h - size * 0.12)}" fill="none" stroke="${WHITE}" stroke-width="${r1(size * 0.045)}"/>` : '')
+      + `<text x="0" y="${r1(fs_ * 0.36)}" text-anchor="middle" font-family="${font}" font-weight="${weight}" font-size="${r1(fs_)}" fill="${fg}">${esc(ch)}</text>`
+      + `<animate attributeName="opacity" from="0" to="1" begin="${t}s" dur="0.01s" fill="freeze"/>`
+      + `<animateTransform attributeName="transform" type="scale" values="1.9;0.92;1" keyTimes="0;.7;1" begin="${t}s" dur="0.22s" fill="freeze"/>`
+      + `</g></g>\n`;
+    x += w + size * 0.05;
+    i++;
+  }
+  return { svg: s, end: x, next: i };
+}
+
+// Phnom Penh skyline from the portfolio (Wat Phnom, Independence Monument, Royal Palace, Vattanac)
+function skyline() {
+  const W = 1440, G = 170;
+  const BLOCKS = [
+    [0, 46, 62], [44, 38, 92], [80, 52, 70], [232, 40, 84], [270, 58, 118], [326, 34, 76], [358, 48, 100],
+    [404, 60, 66], [462, 40, 88], [650, 44, 96], [692, 36, 72], [726, 50, 110], [990, 46, 80], [1034, 58, 124],
+    [1090, 40, 90], [1240, 44, 100], [1282, 52, 74], [1332, 40, 112], [1370, 70, 84],
+  ];
+  const LANDMARKS = [
+    'M120 170 Q170 118 222 170 Z', 'M150 140 H194 V128 H150 Z', 'M156 128 Q172 76 188 128 Z', 'M169 92 L172 34 L175 92 Z',
+    'M520 170 V150 H600 V170 Z', 'M528 150 L536 128 H584 L592 150 Z', 'M538 128 L544 106 H576 L582 128 Z',
+    'M546 106 L550 86 H570 L574 106 Z', 'M552 86 L555 68 H565 L568 86 Z', 'M556 68 L560 40 L564 68 Z',
+    'M808 170 V136 H952 V170 Z', 'M790 140 L812 136 L880 100 L948 136 L970 140 L948 132 L880 92 L812 132 Z',
+    'M822 120 L880 84 L938 120 L930 120 L880 90 L830 120 Z', 'M826 136 L880 104 L934 136 Z',
+    'M864 92 L868 70 H892 L896 92 Z', 'M872 70 L880 18 L888 70 Z',
+    'M1150 170 L1152 40 Q1160 8 1206 2 Q1184 26 1190 60 L1192 170 Z', 'M1188 170 V96 H1226 V170 Z',
+  ];
+  const shapes = BLOCKS.map(([x, w, h]) => `M${x} ${G}V${G - h}H${x + w}V${G}Z`).join('') + LANDMARKS.join('');
+  let wins = '';
+  BLOCKS.forEach(([x, w, h], b) => {
+    for (let y = G - h + 10; y < G - 10; y += 13)
+      for (let wx = x + 7; wx < x + w - 9; wx += 11) {
+        const on = hash(b * 97 + wx * 3 + y);
+        const fill = on > 0.93 ? RED : on > 0.55 ? WARM : '#1e1e1e';
+        const blink = on > 0.55 && hash(wx + y * 7) > 0.85;
+        wins += `<rect x="${wx}" y="${y}" width="5" height="7" fill="${fill}">${blink ? `<animate attributeName="opacity" values="1;.2;1" dur="${r1(3 + hash(wx) * 5)}s" begin="${r1(hash(y) * 4)}s" repeatCount="indefinite"/>` : ''}</rect>`;
+      }
+  });
+  return `<path d="${shapes}" fill="none" stroke="${WHITE}" stroke-width="7" stroke-linejoin="round"/><path d="${shapes}" fill="${BLACK}"/><rect x="0" y="${G - 1}" width="${W}" height="60" fill="${BLACK}"/>${wins}`;
+}
+
+function stars(n, W, H, seed, avoid = () => false) {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const x = hash(i * 3 + seed) * W, y = hash(i * 7 + seed + 2) * H;
+    if (avoid(x, y)) continue;
+    const size = i % 3 === 0 ? 10 + hash(i * 11 + seed) * 10 : 4 + hash(i * 11 + seed) * 5;
+    const fill = hash(i * 17 + seed) > 0.82 ? RED : WHITE;
+    s += '  ' + star(x, y, size, fill, `<animate attributeName="opacity" values=".9;.2;.9" dur="${r1(2.5 + hash(i + seed) * 3)}s" begin="${r1(hash(i * 5 + seed) * 4)}s" repeatCount="indefinite"/>`) + '\n';
+  }
+  return s;
+}
+
+const halftone = (id, x, y, w, h, angle = 135) => `<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="1.8" fill="${BLACK}"/></pattern>`;
 
 // ---------- banner ----------
 function banner() {
-  const W = 1200, H = 440;
+  const W = 1200, H = 460;
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Chey Rotana, mobile and full-stack developer">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${C.sky0}"/><stop offset=".6" stop-color="${C.sky1}"/><stop offset="1" stop-color="${C.sky2}"/>
-    </linearGradient>
-    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
-      <stop offset="0" stop-color="${C.orange}" stop-opacity=".22"/><stop offset="1" stop-color="${C.orange}" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="tileG" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2c2c2c"/><stop offset=".5" stop-color="${C.tile}"/><stop offset=".5" stop-color="#1b1b1b"/><stop offset="1" stop-color="#262626"/>
-    </linearGradient>
-    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${C.sky0}" stop-opacity="0"/><stop offset="1" stop-color="${C.sky0}" stop-opacity=".85"/>
-    </linearGradient>
-    <clipPath id="frame"><rect width="${W}" height="${H}" rx="18"/></clipPath>
-    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="frame"><rect width="${W}" height="${H}"/></clipPath>
+    ${halftone('dots')}
+    <linearGradient id="dotFade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <mask id="dotMask"><rect width="${W}" height="${H}" fill="url(#dotFade)"/></mask>
   </defs>
   <g clip-path="url(#frame)">
-  <rect width="${W}" height="${H}" fill="url(#sky)"/>
+  <rect width="${W}" height="${H}" fill="${BLACK}"/>
+${stars(70, W, 330, 11, (x) => x < 600)}
+  <!-- red slab with a white slash and halftone dots -->
+  <path d="M0 0H600L440 ${H}H0Z" fill="${RED}"/>
+  <path d="M600 0H624L464 ${H}H440Z" fill="${WHITE}"/>
+  <path d="M0 0H600L440 ${H}H0Z" fill="url(#dots)" opacity=".45" mask="url(#dotMask)"/>
+  <!-- burst and moon -->
+  <g transform="translate(960 130)">
+    <g transform="scale(2.5) translate(-50 -50)"><polygon points="${BURST}" fill="${BLACK}" stroke="${WHITE}" stroke-width="2.5" stroke-linejoin="round"><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="40s" repeatCount="indefinite"/></polygon></g>
+    <g transform="scale(1.2) translate(-50 -50)"><path d="M62 8a44 44 0 1 0 30 62A36 36 0 0 1 62 8z" fill="${WHITE}" stroke="${BLACK}" stroke-width="3" stroke-linejoin="round"/><circle cx="40" cy="58" r="5" fill="${MUTED}"/><circle cx="30" cy="40" r="3" fill="${MUTED}"/><circle cx="52" cy="78" r="3.5" fill="${MUTED}"/></g>
+  </g>
+  <!-- Phnom Penh skyline -->
+  <g transform="translate(0 ${H - 150}) scale(0.84)">${skyline()}</g>
 `;
-  // stars
-  s += `  <g fill="${C.fg}">\n`;
-  for (let i = 0; i < 70; i++) {
-    const x = r1(rnd() * W), y = r1(rnd() * 230), rad = r1(0.5 + rnd() * 1.1), lo = r1(0.15 + rnd() * 0.3);
-    s += `    <circle cx="${x}" cy="${y}" r="${rad}" opacity="${lo}"><animate attributeName="opacity" values="${lo};.9;${lo}" dur="${r1(2.5 + rnd() * 3.5)}s" begin="${r1(rnd() * 4)}s" repeatCount="indefinite"/></circle>\n`;
-  }
-  s += `  </g>\n  <ellipse cx="600" cy="330" rx="520" ry="120" fill="url(#glow)"/>\n`;
+  // location tag
+  s += `  <g transform="translate(70 30) rotate(-3)"><rect x="5" y="5" width="232" height="30" fill="${BLACK}"/><rect width="232" height="30" fill="${WHITE}"/><text x="116" y="21" text-anchor="middle" font-family="${F.anton}" font-size="16" letter-spacing="3" fill="${BLACK}">PHNOM PENH · CAMBODIA</text></g>\n`;
+  // name as ransom tiles
+  const a = ransomWord('CHEY', 74, 122, 76, 0, 0, 0.3);
+  const b = ransomWord('ROTANA', 104, 222, 76, 0, a.next, 0.3);
+  s += a.svg + b.svg;
 
-  // skyline: two rows of 2.5D blocks
-  const row = (base, minH, maxH, cols, id) => {
-    let g = '';
-    let x = -30;
-    while (x < W + 30) {
-      const w = 36 + Math.floor(rnd() * 50), h = minH + Math.floor(rnd() * (maxH - minH)), d = 12 + Math.floor(rnd() * 8);
-      const top = base - h;
-      const brick = rnd() < 0.12;
-      const [front, side, roof] = brick ? cols.brick : cols.slate;
-      g += `    <path d="M${x + w} ${top}l${d} ${-d * 0.6}v${h}l${-d} ${d * 0.6}z" fill="${side}"/>`;
-      g += `<path d="M${x} ${top}l${d} ${-d * 0.6}h${w}l${-d} ${d * 0.6}z" fill="${roof}"/>`;
-      g += `<rect x="${x}" y="${top}" width="${w}" height="${h}" fill="${front}"/>\n`;
-      for (let wy = top + 12; wy < base - 14; wy += 20)
-        for (let wx = x + 8; wx < x + w - 10; wx += 15) {
-          const p = rnd();
-          if (p < cols.lit) {
-            const tw = rnd() < 0.18;
-            g += `    <rect x="${wx}" y="${wy}" width="6" height="8" fill="${C.win}" opacity="${cols.winOp}">${tw ? `<animate attributeName="opacity" values="${cols.winOp};.15;${cols.winOp}" dur="${r1(3 + rnd() * 6)}s" begin="${r1(rnd() * 5)}s" repeatCount="indefinite"/>` : ''}</rect>\n`;
-          }
-        }
-      x += w + d + 2 + Math.floor(rnd() * 10);
-    }
-    return `  <g id="${id}">\n${g}  </g>\n`;
-  };
-  s += row(395, 70, 190, { slate: ['#1a2142', '#141a35', '#252e55'], brick: ['#2e1d24', '#24161c', '#3b252d'], lit: 0.22, winOp: 0.55 }, 'back');
-  // elevated transit line (deck, pillars, orange line)
-  let pillars = '';
-  for (let x = 20; x < W; x += 75) pillars += `<rect x="${x - 4}" y="${r1(lineY(x) + 6)}" width="8" height="${r1(H - lineY(x))}" fill="#252c45"/>`;
-  s += `  <g>${pillars}</g>\n`;
-  s += `  <path d="${linePath(-20, W + 20, x => lineY(x) + 5)}" fill="none" stroke="#2a3150" stroke-width="16" stroke-linejoin="round"/>\n`;
-  s += `  <path id="track" d="${linePath(-20, W + 20)}" fill="none" stroke="${C.orange}" stroke-width="5" stroke-linejoin="round" filter="url(#soft)"/>\n`;
-  s += row(470, 40, 100, { slate: ['#2b3557', '#20284a', '#3d4870'], brick: ['#3a2329', '#2c1a20', '#4a2d35'], lit: 0.3, winOp: 0.8 }, 'front');
-  s += `  <rect y="${H - 90}" width="${W}" height="90" fill="url(#haze)"/>\n`;
-
-  // train running the line
-  s += `  <g>
-    <g transform="translate(0 -9)">
-      ${[-44, -8, 28].map(o => `<rect x="${o}" y="-8" width="34" height="14" rx="4" fill="${C.fg}"/><rect x="${o}" y="2" width="34" height="3" fill="${C.orange}"/><rect x="${o + 4}" y="-5" width="7" height="5" rx="1" fill="#1b1f2b"/><rect x="${o + 14}" y="-5" width="7" height="5" rx="1" fill="#1b1f2b"/><rect x="${o + 24}" y="-5" width="6" height="5" rx="1" fill="#1b1f2b"/>`).join('')}
-      <circle cx="62" cy="-1" r="2.4" fill="#fff6c8"/>
-    </g>
-    <animateMotion dur="18s" repeatCount="indefinite" rotate="auto"><mpath href="#track"/></animateMotion>
+  // tagline strip with hard cuts between phrases
+  const phrases = ['MOBILE & FULL-STACK DEVELOPER', 'FLUTTER · REACT · TYPESCRIPT', 'APPS THAT SOLVE REAL PROBLEMS', 'DEVELOPER INTERN AT MLMUPC', 'CS STUDENT AT CADT'];
+  const T = 3, N = phrases.length, D = T * N;
+  const bx = 84, by = 290, bw = 470, bh = 46;
+  s += `  <g transform="translate(${bx} ${by}) skewX(-12)">
+    <rect x="9" y="9" width="${bw}" height="${bh}" fill="${RED}"/>
+    <rect width="${bw}" height="${bh}" fill="${BLACK}" stroke="${WHITE}" stroke-width="3"/>
   </g>\n`;
-
-  // station pins
-  const stops = ['About', 'Journey', 'Skills', 'Work', 'Contact'];
-  const xs = [130, 365, 600, 835, 1070];
-  stops.forEach((name, i) => {
-    const x = xs[i], y = r1(lineY(x));
-    const w = 34 + name.length * 9.6;
-    s += `  <g transform="translate(${x} ${y})"><rect x="-7" y="-4" width="14" height="10" rx="2" fill="#0d0f16"/><circle r="5" fill="${C.fg}" stroke="${C.orange}" stroke-width="3"/>
-    <g transform="translate(${r1(-w / 2)} -44)"><rect width="${r1(w)}" height="26" rx="8" fill="#0d0f16" stroke="${C.line}"/><circle cx="13" cy="13" r="8" fill="${C.orange}"/><text x="13" y="17" text-anchor="middle" font-family="${SANS}" font-size="11" font-weight="800" fill="#fff">${i + 1}</text><text x="27" y="17.5" font-family="${SANS}" font-size="13" font-weight="700" fill="${C.fg}">${name}</text></g>
-    <path d="M-4 -18h8l-4 5z" fill="#0d0f16"/></g>\n`;
-  });
-
-  // header strip
-  s += `  <g transform="translate(28 26)"><circle cx="16" cy="16" r="16" fill="${C.orange}"/><text x="16" y="21.5" text-anchor="middle" font-family="${SANS}" font-size="16" font-weight="800" fill="#fff">R</text>
-    <text x="42" y="13" font-family="${MONO}" font-size="10" letter-spacing="2" fill="${C.muted}">ROTANA LINE</text>
-    <text x="42" y="30" font-family="${SANS}" font-size="16" font-weight="800" fill="${C.fg}">Rotana Central</text></g>
-  <g transform="translate(1172 26)" text-anchor="end"><text y="13" font-family="${MONO}" font-size="10" letter-spacing="2" fill="${C.muted}">PHNOM PENH</text>
-    <text y="31" font-family="${MONO}" font-size="16" font-weight="700" fill="${C.amber}">LINE 1 · KH</text></g>\n`;
-
-  // departure board
-  const name = 'CHEY ROTANA';
-  const TW = 46, TH = 60, GAP = 6, SP = 22;
-  let total = 0;
-  for (const ch of name) total += ch === ' ' ? SP : TW + GAP;
-  total -= GAP;
-  const bx = 600 - total / 2, by = 132;
-  s += `  <rect x="${r1(bx - 34)}" y="84" width="${r1(total + 68)}" height="172" rx="16" fill="${C.board}" fill-opacity=".94" stroke="#2a2a2a"/>
-  <g transform="translate(${r1(bx)} 98)"><circle cx="9" cy="9" r="9" fill="${C.orange}"/><text x="9" y="13" text-anchor="middle" font-family="${SANS}" font-size="11" font-weight="800" fill="#fff">R</text><text x="26" y="13.5" font-family="${MONO}" font-size="12" letter-spacing="3" fill="${C.muted}">ROTANA CENTRAL · LINE 1</text></g>\n`;
-  const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let x = bx, ti = 0;
-  for (const ch of name) {
-    if (ch === ' ') { x += SP; continue; }
-    const cx = r1(x + TW / 2);
-    s += `  <g><rect x="${r1(x)}" y="${by}" width="${TW}" height="${TH}" rx="5" fill="url(#tileG)"/>`;
-    const flips = 8 + ti * 2, step = 0.055, start = 0.4;
-    for (let k = 0; k < flips; k++) {
-      const g = glyphs[Math.floor(rnd() * glyphs.length)];
-      s += `<text x="${cx}" y="${by + 44}" text-anchor="middle" font-family="${MONO}" font-size="40" font-weight="700" fill="${C.fg}" visibility="hidden">${g}<set attributeName="visibility" to="visible" begin="${r1((start + k * step) * 1000) / 1000}s" dur="${step}s"/></text>`;
-    }
-    s += `<text x="${cx}" y="${by + 44}" text-anchor="middle" font-family="${MONO}" font-size="40" font-weight="700" fill="${C.fg}" visibility="hidden">${ch}<set attributeName="visibility" to="visible" begin="${r1((start + flips * step) * 1000) / 1000}s" fill="freeze"/></text>`;
-    s += `<rect x="${r1(x)}" y="${by + TH / 2 - 0.75}" width="${TW}" height="1.5" fill="#0a0a0a"/></g>\n`;
-    x += TW + GAP; ti++;
-  }
-
-  // typed tagline (amber, like the portfolio subtitle)
-  const phrases = ['MOBILE & FULL-STACK DEVELOPER', 'FLUTTER, REACT AND TYPESCRIPT', 'APPS THAT SOLVE REAL PROBLEMS', 'DEVELOPER INTERN AT MLMUPC', 'CS STUDENT AT CADT'];
-  const CW = 13.2, TYPE = 0.09, HOLD = 2.4, DEL = 0.035, PAUSE = 0.45, LEAD = 1.6;
-  const frames = []; let t = 0;
-  frames.push([0, -1, 0]); t = LEAD;
   phrases.forEach((p, i) => {
-    const n = p.length;
-    for (let c = 0; c <= n; c++) { frames.push([t, i, c]); if (c < n) t += TYPE; }
-    t += HOLD;
-    for (let c = n; c >= 0; c--) { frames.push([t, i, c]); if (c > 0) t += DEL; }
-    t += PAUSE;
+    const a0 = i / N, a1 = (i + 1) / N, e = 0.18 / D;
+    const kt = i === 0 ? `0;${e.toFixed(4)};${(a1 - 0.0001).toFixed(4)};${a1.toFixed(4)};1` : `0;${a0.toFixed(4)};${(a0 + e).toFixed(4)};${a1.toFixed(4)};1`;
+    const op = i === 0 ? '1;1;1;0;0' : '0;1;1;0;0';
+    const xs = i === 0 ? `${bx - 10};${bx + 22};${bx + 22};${bx + 22};${bx + 22}` : `${bx + 22};${bx - 10};${bx + 22};${bx + 22};${bx + 22}`;
+    s += `  <text x="${bx + 22}" y="${by + 32}" textLength="${r1(Math.min(p.length * 14.6, bw - 44))}" lengthAdjust="spacingAndGlyphs" font-family="${F.anton}" font-size="25" letter-spacing="2" fill="${WHITE}" opacity="${i === 0 ? 1 : 0}">${esc(p)}`
+      + `<animate attributeName="opacity" values="${op}" keyTimes="${kt}" dur="${D}s" calcMode="discrete" repeatCount="indefinite"/>`
+      + `<animate attributeName="x" values="${xs}" keyTimes="${kt}" dur="${D}s" repeatCount="indefinite"/></text>\n`;
   });
-  const dur = t; frames.push([dur, -1, 0]);
-  const keyTimes = frames.map(f => (f[0] / dur).toFixed(4)).join(';');
-  const anim = (attr, vals) => `<animate attributeName="${attr}" values="${vals.join(';')}" keyTimes="${keyTimes}" dur="${r1(dur * 100) / 100}s" calcMode="discrete" repeatCount="indefinite"/>`;
-  const sx = p => r1(600 - p.length * CW / 2);
-  const ty = 232;
-  phrases.forEach((p, i) => {
-    const widths = frames.map(f => f[1] === i ? r1(f[2] * CW) : 0);
-    s += `  <clipPath id="type${i}"><rect x="${sx(p)}" y="${ty - 22}" height="30" width="0">${anim('width', widths)}</rect></clipPath>\n`;
-    s += `  <text x="${sx(p)}" y="${ty}" textLength="${r1(p.length * CW)}" lengthAdjust="spacingAndGlyphs" font-family="${MONO}" font-size="18" font-weight="700" fill="${C.amber}" clip-path="url(#type${i})">${esc(p)}</text>\n`;
-  });
-  const cur = frames.map(f => f[1] < 0 ? sx(phrases[0]) + 2 : r1(sx(phrases[f[1]]) + 2 + f[2] * CW));
-  s += `  <rect x="${cur[0]}" y="${ty - 17}" width="9" height="3" fill="${C.orange}" transform="translate(0 18)">${anim('x', cur)}<animate attributeName="opacity" values="1;0;1" dur="1s" calcMode="discrete" keyTimes="0;.5;1" repeatCount="indefinite"/></rect>\n`;
-  s += `  </g>\n</svg>\n`;
+  s += `  <rect width="${W}" height="${H}" fill="none" stroke="${WHITE}" stroke-width="6"/>\n  </g>\n</svg>\n`;
   return s;
 }
 
 // ---------- footer ----------
 function footer() {
-  const W = 1200, H = 90, y = 46;
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="">
-  <defs><linearGradient id="fade" gradientUnits="userSpaceOnUse" x1="60" x2="1140"><stop offset="0" stop-color="${C.orange}" stop-opacity="0"/><stop offset=".12" stop-color="${C.orange}"/><stop offset=".88" stop-color="${C.orange}"/><stop offset="1" stop-color="${C.orange}" stop-opacity="0"/></linearGradient></defs>
-  <path id="ft" d="M60 ${y}H1140" stroke="url(#fade)" stroke-width="5" stroke-linecap="round"/>
-`;
-  [240, 420, 600, 780, 960].forEach((x, i) => {
-    s += `  <circle cx="${x}" cy="${y}" r="7" fill="${C.fg}" stroke="${C.orange}" stroke-width="3.5"/><text x="${x}" y="${y + 30}" text-anchor="middle" font-family="${MONO}" font-size="11" letter-spacing="2" fill="${C.muted}">${['ABOUT', 'JOURNEY', 'SKILLS', 'WORK', 'CONTACT'][i]}</text>\n`;
-  });
-  s += `  <text x="600" y="${y - 20}" text-anchor="middle" font-family="${MONO}" font-size="11" letter-spacing="3" fill="${C.amber}">END OF THE LINE · THANKS FOR RIDING</text>
-  <g><g transform="translate(-40 0)">${[0, 26].map(o => `<rect x="${o}" y="-7" width="24" height="12" rx="3" fill="${C.fg}"/><rect x="${o}" y="2" width="24" height="2.5" fill="${C.orange}"/>`).join('')}</g>
-    <animateMotion path="M100 ${y - 8}H1100" dur="9s" repeatCount="indefinite" keyPoints="0;1;1;0;0" keyTimes="0;.45;.5;.95;1" calcMode="spline" keySplines=".45 0 .55 1;0 0 1 1;.45 0 .55 1;0 0 1 1"/></g>
+  const W = 1200, H = 120;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Thanks for stopping by">
+  <defs>${halftone('fdots')}</defs>
+  <path d="M0 40L${W} 14V74L0 100Z" fill="${RED}"/>
+  <path d="M0 40L${W} 14V74L0 100Z" fill="url(#fdots)" opacity=".35"/>
+  <path d="M0 34L${W} 8V14L0 40Z" fill="${WHITE}"/>
+  <path d="M0 100L${W} 74V80L0 106Z" fill="${WHITE}"/>
+  <g transform="translate(600 58) rotate(-1.3)">
+    <g transform="skewX(-12)"><rect x="-200" y="-22" width="400" height="44" fill="${WHITE}" transform="translate(7 7)"/><rect x="-200" y="-22" width="400" height="44" fill="${BLACK}" stroke="${WHITE}" stroke-width="3"/></g>
+    <text x="0" y="10" text-anchor="middle" font-family="${F.anton}" font-size="26" letter-spacing="4" fill="${WHITE}">THANKS FOR STOPPING BY</text>
+  </g>
+  ${star(150, 56, 26, BLACK)}${star(1050, 36, 26, BLACK)}
+  ${star(150, 56, 14, WHITE)}${star(1050, 36, 14, WHITE)}
 </svg>\n`;
-  return s;
 }
 
 // ---------- section signs ----------
 function sign(n, label) {
-  const w = Math.round(62 + label.length * 12.5);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} 48" width="${w}" height="48" role="img" aria-label="${n}. ${label}">
-  <rect x="1" y="1" width="${w - 2}" height="46" rx="12" fill="${C.bg}" stroke="${C.line}" stroke-width="1.5"/>
-  <rect x="1" y="1" width="${w - 2}" height="5" rx="2" fill="${C.orange}"/>
-  <circle cx="27" cy="26" r="13" fill="${C.orange}"/>
-  <text x="27" y="31.5" text-anchor="middle" font-family="${SANS}" font-size="15" font-weight="800" fill="#fff">${n}</text>
-  <text x="50" y="32" font-family="${SANS}" font-size="19" font-weight="800" fill="${C.fg}">${esc(label)}</text>
+  const lw = Math.round(label.length * 17 + 20);
+  const w = 78 + lw, h = 58;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w + 10} ${h + 10}" width="${w + 10}" height="${h + 10}" role="img" aria-label="${n}. ${label}">
+  <path d="M${22 + 7} ${9 + 7}H${w + 4}L${w - 14 + 4} ${h + 5}H${7 + 4}Z" fill="${RED}"/>
+  <path d="M22 9H${w - 3}L${w - 21} ${h - 2}H4Z" fill="${BLACK}" stroke="${WHITE}" stroke-width="3" stroke-linejoin="miter"/>
+  <g transform="translate(38 33) rotate(-7)"><rect x="-17" y="-19" width="34" height="38" fill="${RED}" stroke="${WHITE}" stroke-width="2.5"/><text x="0" y="10" text-anchor="middle" font-family="${F.anton}" font-size="28" fill="${WHITE}">${n}</text></g>
+  <text x="66" y="44" font-family="${F.anton}" font-size="30" letter-spacing="2" fill="${WHITE}">${esc(label.toUpperCase())}</text>
 </svg>\n`;
 }
 
-// ---------- journey line ----------
+// ---------- journey ----------
 function journey() {
   const stops = [
     ['YEAR 1', 'Took off at CADT', 'B.Sc. Computer Science', 'study'],
@@ -214,34 +211,38 @@ function journey() {
     ['OCT 2026', 'PhumiYerng', 'LASED III communities', 'work'],
     ['NOW', 'Where to next?', 'Final year at CADT', 'next'],
   ];
-  const W = 1200, H = 330, y = 165;
+  const W = 1200, H = 340, y = 168;
   let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Journey: CADT, Modula, Frost Guard, UniFinder, developer intern at MLMUPC, Face Scan Connector, PhumiYerng, and next">
-  <rect width="${W}" height="${H}" rx="18" fill="${C.bg}"/>
-  <path d="M50 ${y + 4}H1150" stroke="#232838" stroke-width="16" stroke-linecap="round"/>
-  <path id="jl" d="M50 ${y}H1080" stroke="${C.orange}" stroke-width="6" stroke-linecap="round"/>
-  <path d="M1080 ${y}H1150" stroke="${C.orange}" stroke-width="6" stroke-dasharray="8 8" stroke-linecap="round"><animate attributeName="stroke-dashoffset" values="16;0" dur="1s" repeatCount="indefinite"/></path>
+  <rect x="12" y="12" width="${W - 16}" height="${H - 16}" fill="${RED}"/>
+  <rect x="3" y="3" width="${W - 16}" height="${H - 16}" fill="${BLACK}" stroke="${WHITE}" stroke-width="3"/>
+  <path d="M50 ${y}L1080 ${y - 8}" stroke="${WHITE}" stroke-width="16" stroke-linecap="square"/>
+  <path d="M50 ${y}L1080 ${y - 8}" stroke="${RED}" stroke-width="8"/>
+  <path d="M1080 ${y - 8}L1150 ${y - 9}" stroke="${RED}" stroke-width="8" stroke-dasharray="10 8"><animate attributeName="stroke-dashoffset" values="18;0" dur="0.8s" repeatCount="indefinite"/></path>
 `;
+  const lineAt = x => y - 8 * (x - 50) / 1030;
   stops.forEach(([date, title, org, kind], i) => {
-    const x = r1(162.5 + i * 125), up = i % 2 === 0;
-    const ty = up ? 62 : 222;
-    s += `  <path d="M${x} ${up ? y - 14 : y + 14}V${up ? ty + 58 : ty - 22}" stroke="${C.line}" stroke-width="2"/>\n`;
-    if (kind === 'work') s += `  <circle cx="${x}" cy="${y}" r="11" fill="${C.orange}" stroke="${C.fg}" stroke-width="3.5"/>\n`;
-    else if (kind === 'study') s += `  <circle cx="${x}" cy="${y}" r="10" fill="${C.amber}" stroke="${C.bg}" stroke-width="3"/>\n`;
-    else if (kind === 'next') s += `  <circle cx="${x}" cy="${y}" r="10" fill="${C.bg}" stroke="${C.orange2}" stroke-width="3"/><circle cx="${x}" cy="${y}" r="10" fill="none" stroke="${C.orange2}" stroke-width="2"><animate attributeName="r" values="10;22" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;0" dur="1.8s" repeatCount="indefinite"/></circle>\n`;
-    else s += `  <circle cx="${x}" cy="${y}" r="9" fill="${C.fg}" stroke="${C.orange}" stroke-width="4"/>\n`;
-    s += `  <g text-anchor="middle"><text x="${x}" y="${ty}" font-family="${MONO}" font-size="13" font-weight="700" letter-spacing="2" fill="${C.amber}">${date}</text><text x="${x}" y="${ty + 27}" font-family="${SANS}" font-size="19" font-weight="800" fill="${C.fg}">${esc(title)}</text><text x="${x}" y="${ty + 50}" font-family="${SANS}" font-size="15" fill="${C.muted}">${esc(org)}</text></g>\n`;
+    const x = r1(162.5 + i * 125), ly = r1(lineAt(x)), up = i % 2 === 0;
+    const ty = up ? 58 : 232;
+    s += `  <path d="M${x} ${up ? ly - 18 : ly + 18}V${up ? ty + 62 : ty - 24}" stroke="${WHITE}" stroke-width="2" stroke-dasharray="4 4"/>\n`;
+    if (kind === 'work') s += `  ${star(x, ly, 40, WHITE)}${star(x, ly, 28, RED)}\n`;
+    else if (kind === 'study') s += `  <rect x="${x - 11}" y="${ly - 11}" width="22" height="22" transform="rotate(45 ${x} ${ly})" fill="${WHITE}" stroke="${BLACK}" stroke-width="3"/>\n`;
+    else if (kind === 'next') s += `  <circle cx="${x}" cy="${ly}" r="11" fill="${BLACK}" stroke="${WHITE}" stroke-width="3"/><circle cx="${x}" cy="${ly}" r="11" fill="none" stroke="${RED}" stroke-width="3"><animate attributeName="r" values="11;26" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite"/></circle>\n`;
+    else s += `  <circle cx="${x}" cy="${ly}" r="11" fill="${WHITE}" stroke="${BLACK}" stroke-width="3"/><circle cx="${x}" cy="${ly}" r="4.5" fill="${RED}"/>\n`;
+    s += `  <g text-anchor="middle"><g transform="translate(${x} ${ty - 6}) rotate(-3)"><rect x="${-(date.length * 6.5 + 14)}" y="-15" width="${date.length * 13 + 28}" height="22" fill="${RED}"/><text y="2" font-family="${F.anton}" font-size="16" letter-spacing="2" fill="${WHITE}">${date}</text></g>`
+      + `<text x="${x}" y="${ty + 31}" font-family="${F.archivo}" font-weight="900" font-size="18" fill="${WHITE}">${esc(title)}</text>`
+      + `<text x="${x}" y="${ty + 54}" font-family="${F.body}" font-size="15" fill="${MUTED}">${esc(org)}</text></g>\n`;
   });
-  s += `  <g transform="translate(40 300)" font-family="${MONO}" font-size="12" fill="${C.muted}" letter-spacing="1">
-    <circle cx="6" cy="-4" r="6" fill="${C.amber}"/><text x="18" y="0">STUDY</text>
-    <circle cx="96" cy="-4" r="6" fill="${C.fg}" stroke="${C.orange}" stroke-width="3"/><text x="108" y="0">PROJECT</text>
-    <circle cx="204" cy="-4" r="6" fill="${C.orange}" stroke="${C.fg}" stroke-width="2.5"/><text x="216" y="0">WORK</text>
+  s += `  <g transform="translate(44 306)" font-family="${F.anton}" font-size="14" letter-spacing="2" fill="${MUTED}">
+    <rect x="-7" y="-13" width="13" height="13" transform="rotate(45 0 -6)" fill="${WHITE}"/><text x="16" y="0">STUDY</text>
+    <circle cx="96" cy="-6" r="7" fill="${WHITE}"/><circle cx="96" cy="-6" r="3" fill="${RED}"/><text x="110" y="0">PROJECT</text>
+    ${star(210, -6, 20, RED)}<text x="224" y="0">WORK</text>
   </g>
 </svg>\n`;
   return s;
 }
 
-fs.writeFileSync(path.join(OUT, 'metro-banner.svg'), banner());
-fs.writeFileSync(path.join(OUT, 'metro-footer.svg'), footer());
+fs.writeFileSync(path.join(OUT, 'persona-banner.svg'), banner());
+fs.writeFileSync(path.join(OUT, 'persona-footer.svg'), footer());
 fs.writeFileSync(path.join(OUT, 'journey.svg'), journey());
-[['About'], ['Journey'], ['Skills'], ['Work'], ['Contact']].forEach(([l], i) => fs.writeFileSync(path.join(OUT, 'stops', `${i + 1}-${l.toLowerCase()}.svg`), sign(i + 1, l)));
+['About', 'Journey', 'Skills', 'Work', 'Contact'].forEach((l, i) => fs.writeFileSync(path.join(OUT, 'stops', `${i + 1}-${l.toLowerCase()}.svg`), sign(i + 1, l)));
 console.log('ok');
