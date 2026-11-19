@@ -1,17 +1,13 @@
 <p align="center">
-  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/angkor-banner.svg" width="100%" alt="Hey, I'm Rotana. Mobile and full-stack developer" /></a>
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/metro-banner.svg" width="100%" alt="Hey, I'm Chey Rotana. Mobile and full-stack developer" /></a>
 </p>
 
 <p align="center">
-  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Portfolio-cheyrotana--portfolio-f0c674?style=for-the-badge&labelColor=0d1117" alt="Portfolio" /></a>
-</p>
-<p align="center">
-  <img src="https://komarev.com/ghpvc/?username=cheyrotana&label=Profile%20views&color=f0c674&style=flat" alt="Profile views" />
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Board_the_work_line-f06a1f?style=for-the-badge&logo=vercel&logoColor=white" alt="Portfolio" /></a>
+  <img src="https://komarev.com/ghpvc/?username=cheyrotana&label=Riders&color=f06a1f&style=for-the-badge" alt="Profile views" />
 </p>
 
-<div align="center">
-
-<h3 align="center">About me</h3>
+<p align="center"><img src="assets/stops/1-about.svg" height="40" alt="1. About" /></p>
 
 <p align="center">
   I'm a mobile and full-stack developer and a final-year Computer Science student at CADT,<br/>
@@ -21,18 +17,29 @@
   useful apps that solve real-world problems.
 </p>
 
-<h3 align="center">Tech stack</h3>
+<p align="center"><img src="assets/stops/2-journey.svg" height="40" alt="2. Journey" /></p>
 
+<p align="center">
+  <img src="assets/journey.svg" width="100%" alt="Journey: started a Computer Science degree at CADT; Modula, Frost Guard and UniFinder team projects in 2025; developer intern at MLMUPC from April 2026; Face Scan Connector in September 2026; PhumiYerng in October 2026" />
+</p>
+
+<p align="center"><img src="assets/stops/3-skills.svg" height="40" alt="3. Skills" /></p>
+
+<div align="center">
 <table>
   <tr><td align="center"><b>Languages</b></td><td align="center"><img src="https://skillicons.dev/icons?i=dart,ts,js,py,cs,cpp&theme=dark" height="40" /></td></tr>
   <tr><td align="center"><b>Mobile & Frontend</b></td><td align="center"><img src="https://skillicons.dev/icons?i=flutter,react,angular,tailwind,unity&theme=dark" height="40" /></td></tr>
   <tr><td align="center"><b>Backend & Data</b></td><td align="center"><img src="https://skillicons.dev/icons?i=nodejs,nestjs,express,postgres,firebase&theme=dark" height="40" /></td></tr>
   <tr><td align="center"><b>Cloud, Hardware & Tools</b></td><td align="center"><img src="https://skillicons.dev/icons?i=aws,terraform,raspberrypi,git,github,gitlab,figma,vercel&theme=dark" height="40" /></td></tr>
 </table>
-
 </div>
 
-<h3 align="center">Featured work</h3>
+<p align="center">
+  <img src="https://streak-stats.demolab.com/?user=cheyrotana&theme=dark&hide_border=true&background=10131b&ring=f06a1f&fire=f06a1f&currStreakLabel=ff8a3d&sideLabels=aaa49a&dates=aaa49a&stroke=2e3445" height="165" alt="GitHub streak" />
+  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=cheyrotana&layout=compact&hide_border=true&bg_color=10131b&title_color=ff8a3d&text_color=f1ede4" height="165" alt="Top languages" />
+</p>
+
+<p align="center"><img src="assets/stops/4-work.svg" height="40" alt="4. Work" /></p>
 
 <div align="center">
 <table>
@@ -53,21 +60,14 @@
 
 <p align="center"><a href="https://cheyrotana-portfolio-v1.vercel.app">See all my projects →</a></p>
 
-<h3 align="center">Stats</h3>
+<p align="center"><img src="assets/stops/5-contact.svg" height="40" alt="5. Contact" /></p>
 
 <p align="center">
-  <img src="https://streak-stats.demolab.com/?user=cheyrotana&theme=dark&hide_border=true&background=0d1117&ring=f0c674&fire=f0c674&currStreakLabel=f0c674" height="165" alt="GitHub streak" />
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=cheyrotana&layout=compact&hide_border=true&bg_color=0d1117&title_color=f0c674&text_color=c9d1d9" height="165" alt="Top languages" />
-</p>
-
-<h3 align="center">Let's connect</h3>
-
-<p align="center">
-  <a href="https://www.linkedin.com/in/rotana-chey-92b572396/"><img src="https://img.shields.io/badge/LinkedIn-0d1117?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2YwYzY3NCIgZD0iTTIwLjQ1IDIwLjQ1aC0zLjU2di01LjU3YzAtMS4zMy0uMDItMy4wNC0xLjg1LTMuMDQtMS44NiAwLTIuMTQgMS40NS0yLjE0IDIuOTR2NS42N0g5LjM1VjloMy40MXYxLjU2aC4wNWMuNDgtLjkgMS42NC0xLjg1IDMuMzctMS44NSAzLjYgMCA0LjI3IDIuMzcgNC4yNyA1LjQ2djYuMjh6TTUuMzQgNy40M2EyLjA2IDIuMDYgMCAxIDEgMC00LjEzIDIuMDYgMi4wNiAwIDAgMSAwIDQuMTN6TTcuMTIgMjAuNDVIMy41NlY5aDMuNTZ2MTEuNDV6TTIyLjIyIDBIMS43N0MuNzkgMCAwIC43NyAwIDEuNzN2MjAuNTRDMCAyMy4yMy43OSAyNCAxLjc3IDI0aDIwLjQ1Yy45OCAwIDEuNzgtLjc3IDEuNzgtMS43M1YxLjczQzI0IC43NyAyMy4yIDAgMjIuMjIgMHoiLz48L3N2Zz4%3D" /></a>
-  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Portfolio-0d1117?style=for-the-badge&logo=vercel&logoColor=f0c674" /></a>
-  <a href="https://github.com/cheyrotana"><img src="https://img.shields.io/badge/GitHub-0d1117?style=for-the-badge&logo=github&logoColor=f0c674" /></a>
+  <a href="https://www.linkedin.com/in/rotana-chey-92b572396/"><img src="https://img.shields.io/badge/LinkedIn-10131b?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI%2BPHBhdGggZmlsbD0iI2YwNmExZiIgZD0iTTIwLjQ1IDIwLjQ1aC0zLjU2di01LjU3YzAtMS4zMy0uMDItMy4wNC0xLjg1LTMuMDQtMS44NiAwLTIuMTQgMS40NS0yLjE0IDIuOTR2NS42N0g5LjM1VjloMy40MXYxLjU2aC4wNWMuNDgtLjkgMS42NC0xLjg1IDMuMzctMS44NSAzLjYgMCA0LjI3IDIuMzcgNC4yNyA1LjQ2djYuMjh6TTUuMzQgNy40M2EyLjA2IDIuMDYgMCAxIDEgMC00LjEzIDIuMDYgMi4wNiAwIDAgMSAwIDQuMTN6TTcuMTIgMjAuNDVIMy41NlY5aDMuNTZ2MTEuNDV6TTIyLjIyIDBIMS43N0MuNzkgMCAwIC43NyAwIDEuNzN2MjAuNTRDMCAyMy4yMy43OSAyNCAxLjc3IDI0aDIwLjQ1Yy45OCAwIDEuNzgtLjc3IDEuNzgtMS43M1YxLjczQzI0IC43NyAyMy4yIDAgMjIuMjIgMHoiLz48L3N2Zz4%3D" /></a>
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Portfolio-10131b?style=for-the-badge&logo=vercel&logoColor=f06a1f" /></a>
+  <a href="https://github.com/cheyrotana"><img src="https://img.shields.io/badge/GitHub-10131b?style=for-the-badge&logo=github&logoColor=f06a1f" /></a>
 </p>
 
 <p align="center">
-  <img src="assets/angkor-footer.svg" width="100%" alt="" />
+  <img src="assets/metro-footer.svg" width="100%" alt="" />
 </p>
