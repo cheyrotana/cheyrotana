@@ -6,7 +6,7 @@
   <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://img.shields.io/badge/Portfolio-cheyrotana--portfolio-f0c674?style=for-the-badge&labelColor=0d1117" alt="Portfolio" /></a>
 </p>
 <p align="center">
-  <img src="https://u8views.com/api/v1/github/profiles/169222717/views/total-count.svg" alt="Profile views" />
+  <img src="https://komarev.com/ghpvc/?username=cheyrotana&label=Profile%20views&color=f0c674&style=flat" alt="Profile views" />
 </p>
 
 <div align="center">
