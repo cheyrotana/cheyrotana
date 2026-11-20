@@ -1,0 +1,29 @@
+name: Day/night banner
+
+# Every hour, switch the README banner to the scene for the time of day in Phnom Penh.
+# It only commits when the phase changes (about four times a day).
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: day-night
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pick the banner for Phnom Penh time
+        id: phase
+        run: echo "phase=$(node scripts/set-phase.js)" >> "$GITHUB_OUTPUT"
+      - name: Commit if it changed
+        run: |
+          if git diff --quiet; then echo "Still ${{ steps.phase.outputs.phase }}, nothing to do"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898299+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Banner: ${{ steps.phase.outputs.phase }} in Phnom Penh"
+          git push

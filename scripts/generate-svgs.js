@@ -1,5 +1,5 @@
-// Usage: node scripts/generate-svgs.js assets
-// Generates the Persona-themed profile SVGs (banner, footer, section signs, journey line),
+// Usage: node scripts/generate-svgs.js assets   (then node scripts/set-phase.js to pick the banner)
+// Generates the Persona-themed profile SVGs (day/night banners, footer, section signs, journey line),
 // matching the Persona theme of the portfolio (cheyrotana/Portfolio). Edit the text or colours
 // below, re-run, then commit the changed files in assets/.
 const fs = require('fs');
@@ -72,7 +72,8 @@ function ransomWord(word, x0, yMid, size, seed, startIdx, beginAt) {
 }
 
 // Phnom Penh skyline from the portfolio (Wat Phnom, Independence Monument, Royal Palace, Vattanac)
-function skyline() {
+// win: how lit the windows are for the time of day (see PHASES below)
+function skyline(win = { lit: 0.55, accent: 0.93, off: '#1e1e1e', glass: null }) {
   const W = 1440, G = 170;
   const BLOCKS = [
     [0, 46, 62], [44, 38, 92], [80, 52, 70], [232, 40, 84], [270, 58, 118], [326, 34, 76], [358, 48, 100],
@@ -94,22 +95,23 @@ function skyline() {
     for (let y = G - h + 10; y < G - 10; y += 13)
       for (let wx = x + 7; wx < x + w - 9; wx += 11) {
         const on = hash(b * 97 + wx * 3 + y);
-        const fill = on > 0.93 ? RED : on > 0.55 ? WARM : '#1e1e1e';
-        const blink = on > 0.55 && hash(wx + y * 7) > 0.85;
+        const lit = on > win.lit;
+        const fill = lit ? (on > win.accent ? RED : WARM) : win.glass && hash(wx * 5 + y) > 0.6 ? win.glass : win.off;
+        const blink = lit && hash(wx + y * 7) > 0.85;
         wins += `<rect x="${wx}" y="${y}" width="5" height="7" fill="${fill}">${blink ? `<animate attributeName="opacity" values="1;.2;1" dur="${r1(3 + hash(wx) * 5)}s" begin="${r1(hash(y) * 4)}s" repeatCount="indefinite"/>` : ''}</rect>`;
       }
   });
   return `<path d="${shapes}" fill="none" stroke="${WHITE}" stroke-width="7" stroke-linejoin="round"/><path d="${shapes}" fill="${BLACK}"/><rect x="0" y="${G - 1}" width="${W}" height="60" fill="${BLACK}"/>${wins}`;
 }
 
-function stars(n, W, H, seed, avoid = () => false) {
+function stars(n, W, H, seed, avoid = () => false, op = 0.9) {
   let s = '';
   for (let i = 0; i < n; i++) {
     const x = hash(i * 3 + seed) * W, y = hash(i * 7 + seed + 2) * H;
     if (avoid(x, y)) continue;
     const size = i % 3 === 0 ? 10 + hash(i * 11 + seed) * 10 : 4 + hash(i * 11 + seed) * 5;
     const fill = hash(i * 17 + seed) > 0.82 ? RED : WHITE;
-    s += '  ' + star(x, y, size, fill, `<animate attributeName="opacity" values=".9;.2;.9" dur="${r1(2.5 + hash(i + seed) * 3)}s" begin="${r1(hash(i * 5 + seed) * 4)}s" repeatCount="indefinite"/>`) + '\n';
+    s += '  ' + star(x, y, size, fill, `<animate attributeName="opacity" values="${op};${r1(op * 0.2)};${op}" dur="${r1(2.5 + hash(i + seed) * 3)}s" begin="${r1(hash(i * 5 + seed) * 4)}s" repeatCount="indefinite"/>`) + '\n';
   }
   return s;
 }
@@ -117,32 +119,78 @@ function stars(n, W, H, seed, avoid = () => false) {
 const halftone = (id, x, y, w, h, angle = 135) => `<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="1.8" fill="${BLACK}"/></pattern>`;
 
 // ---------- banner ----------
-function banner() {
+// One scene per time of day in Phnom Penh. scripts/set-phase.js picks which one the README shows,
+// and .github/workflows/day-night.yml runs it every hour.
+const SUN = '#ffd400';
+const PHASES = {
+  dawn: {
+    label: 'SUNRISE', sky: [[0, '#1c1646'], [0.45, '#8e1b5c'], [0.75, '#ff5a3c'], [1, '#ffb347']],
+    stars: [18, 140, 0.5], body: 'sun', at: [900, 318], drift: 46, burst: '#ffb347',
+    clouds: ['#ffd2c2', [[660, 96, 0.9, 24, 24], [1070, 150, 0.7, -18, 20]]],
+    win: { lit: 0.8, accent: 0.96, off: '#1e1e1e' },
+  },
+  day: {
+    label: 'DAYTIME', sky: [[0, '#1e88ff'], [1, '#9ad8ff']],
+    stars: null, body: 'sun', at: [960, 130], drift: 0, burst: WHITE,
+    clouds: [WHITE, [[650, 44, 1, 30, 22], [730, 196, 0.8, -24, 18], [1030, 214, 0.85, 26, 26], [1080, 24, 0.6, -18, 20]]],
+    win: { lit: 2, accent: 2, off: '#1e1e1e', glass: '#9fd8ff' },
+  },
+  dusk: {
+    label: 'SUNSET', sky: [[0, '#2a0f3d'], [0.45, '#7a1050'], [0.75, RED], [1, '#ff8a1f']],
+    stars: [30, 160, 0.7], body: 'sun', at: [1000, 312], drift: -46, burst: '#ff8a1f',
+    clouds: ['#ffb1a0', [[660, 110, 0.85, 22, 24], [760, 40, 0.6, -16, 20]]],
+    win: { lit: 0.62, accent: 0.94, off: '#1e1e1e' },
+  },
+  night: {
+    label: 'NIGHT', sky: [[0, BLACK], [1, BLACK]],
+    stars: [70, 330, 0.9], body: 'moon', at: [960, 130], drift: 0, burst: BLACK,
+    clouds: null,
+    win: { lit: 0.55, accent: 0.93, off: '#1e1e1e' },
+  },
+};
+
+const CLOUD = 'M22 62Q2 62 4 46Q8 30 26 34Q30 12 54 14Q72 0 90 18Q112 14 116 34Q134 36 132 52Q130 64 112 62Z';
+const cloud = ([x, y, k, dx, dur], fill) =>
+  `  <g transform="translate(${x} ${y}) scale(${k})"><g>`
+  + `<path d="${CLOUD}" fill="${BLACK}" transform="translate(6 6)"/><path d="${CLOUD}" fill="${fill}" stroke="${BLACK}" stroke-width="3" stroke-linejoin="round"/>`
+  + `<animateTransform attributeName="transform" type="translate" values="0 0;${dx} 0;0 0" dur="${dur}s" repeatCount="indefinite"/></g></g>\n`;
+
+function skyBody(p) {
+  const [x, y] = p.at;
+  const rise = p.drift ? `<animateTransform attributeName="transform" type="translate" from="0 ${p.drift}" to="0 0" dur="6s" fill="freeze"/>` : '';
+  const burst = `<g transform="scale(2.5) translate(-50 -50)"><polygon points="${BURST}" fill="${p.burst}" stroke="${p.body === 'moon' ? WHITE : BLACK}" stroke-width="2.5" stroke-linejoin="round"><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="40s" repeatCount="indefinite"/></polygon></g>`;
+  const disc = p.body === 'moon'
+    ? `<g transform="scale(1.2) translate(-50 -50)"><path d="M62 8a44 44 0 1 0 30 62A36 36 0 0 1 62 8z" fill="${WHITE}" stroke="${BLACK}" stroke-width="3" stroke-linejoin="round"/><circle cx="40" cy="58" r="5" fill="${MUTED}"/><circle cx="30" cy="40" r="3" fill="${MUTED}"/><circle cx="52" cy="78" r="3.5" fill="${MUTED}"/></g>`
+    : `<circle r="58" fill="${SUN}" stroke="${BLACK}" stroke-width="4"/><circle r="44" fill="none" stroke="${WHITE}" stroke-width="3" stroke-dasharray="14 10" opacity=".8"/><path d="M-30 -22A38 38 0 0 1 -6 -38" fill="none" stroke="${WHITE}" stroke-width="6" stroke-linecap="round"/>`;
+  return `  <g transform="translate(${x} ${y})"><g>${burst}${disc}${rise}</g></g>\n`;
+}
+
+function banner(phase) {
+  const p = PHASES[phase];
   const W = 1200, H = 460;
-  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Chey Rotana, mobile and full-stack developer">
+  let s = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Chey Rotana, mobile and full-stack developer. ${p.label.toLowerCase()} in Phnom Penh">
   <defs>
     <clipPath id="frame"><rect width="${W}" height="${H}"/></clipPath>
     ${halftone('dots')}
+    <pattern id="skyDots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="1.6" fill="${WHITE}"/></pattern>
     <linearGradient id="dotFade" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#fff" stop-opacity="0"/></linearGradient>
     <mask id="dotMask"><rect width="${W}" height="${H}" fill="url(#dotFade)"/></mask>
+    <linearGradient id="sky" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="400">${p.sky.map(([o, c]) => `<stop offset="${o}" stop-color="${c}"/>`).join('')}</linearGradient>
   </defs>
   <g clip-path="url(#frame)">
-  <rect width="${W}" height="${H}" fill="${BLACK}"/>
-${stars(70, W, 330, 11, (x) => x < 600)}
+  <rect width="${W}" height="${H}" fill="url(#sky)"/>
+${p.body === 'sun' ? `  <rect width="${W}" height="${H}" fill="url(#skyDots)" opacity=".14"/>\n` : ''}${p.stars ? stars(p.stars[0], W, p.stars[1], 11, (x) => x < 600, p.stars[2]) : ''}
   <!-- red slab with a white slash and halftone dots -->
   <path d="M0 0H600L440 ${H}H0Z" fill="${RED}"/>
   <path d="M600 0H624L464 ${H}H440Z" fill="${WHITE}"/>
   <path d="M0 0H600L440 ${H}H0Z" fill="url(#dots)" opacity=".45" mask="url(#dotMask)"/>
-  <!-- burst and moon -->
-  <g transform="translate(960 130)">
-    <g transform="scale(2.5) translate(-50 -50)"><polygon points="${BURST}" fill="${BLACK}" stroke="${WHITE}" stroke-width="2.5" stroke-linejoin="round"><animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="40s" repeatCount="indefinite"/></polygon></g>
-    <g transform="scale(1.2) translate(-50 -50)"><path d="M62 8a44 44 0 1 0 30 62A36 36 0 0 1 62 8z" fill="${WHITE}" stroke="${BLACK}" stroke-width="3" stroke-linejoin="round"/><circle cx="40" cy="58" r="5" fill="${MUTED}"/><circle cx="30" cy="40" r="3" fill="${MUTED}"/><circle cx="52" cy="78" r="3.5" fill="${MUTED}"/></g>
-  </g>
-  <!-- Phnom Penh skyline -->
-  <g transform="translate(0 ${H - 150}) scale(0.84)">${skyline()}</g>
+  <!-- sun or moon -->
+${skyBody(p)}${p.clouds ? p.clouds[1].map(c => cloud(c, p.clouds[0])).join('') : ''}  <!-- Phnom Penh skyline -->
+  <g transform="translate(0 ${H - 150}) scale(0.84)">${skyline(p.win)}</g>
 `;
-  // location tag
-  s += `  <g transform="translate(70 30) rotate(-3)"><rect x="5" y="5" width="232" height="30" fill="${BLACK}"/><rect width="232" height="30" fill="${WHITE}"/><text x="116" y="21" text-anchor="middle" font-family="${F.anton}" font-size="16" letter-spacing="3" fill="${BLACK}">PHNOM PENH · CAMBODIA</text></g>\n`;
+  // location tag, showing the time of day
+  const tag = `PHNOM PENH · ${p.label}`, tw = Math.round(tag.length * 10.8 + 6);
+  s += `  <g transform="translate(70 30) rotate(-3)"><rect x="5" y="5" width="${tw}" height="30" fill="${BLACK}"/><rect width="${tw}" height="30" fill="${WHITE}"/><text x="${tw / 2}" y="21" text-anchor="middle" font-family="${F.anton}" font-size="16" letter-spacing="3" fill="${BLACK}">${tag}</text></g>\n`;
   // name as ransom tiles
   const a = ransomWord('CHEY', 74, 122, 76, 0, 0, 0.3);
   const b = ransomWord('ROTANA', 104, 222, 76, 0, a.next, 0.3);
@@ -241,7 +289,8 @@ function journey() {
   return s;
 }
 
-fs.writeFileSync(path.join(OUT, 'persona-banner.svg'), banner());
+fs.mkdirSync(path.join(OUT, 'banner'), { recursive: true });
+Object.keys(PHASES).forEach(ph => fs.writeFileSync(path.join(OUT, 'banner', `${ph}.svg`), banner(ph)));
 fs.writeFileSync(path.join(OUT, 'persona-footer.svg'), footer());
 fs.writeFileSync(path.join(OUT, 'journey.svg'), journey());
 ['About', 'Journey', 'Skills', 'Work', 'Contact'].forEach((l, i) => fs.writeFileSync(path.join(OUT, 'stops', `${i + 1}-${l.toLowerCase()}.svg`), sign(i + 1, l)));
