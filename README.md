@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="assets/banner/day.svg" width="100%" alt="Hey, I'm Chey Rotana. Mobile and full-stack developer. It's daytime in Phnom Penh" /></a>
+  <a href="https://cheyrotana-portfolio-v1.vercel.app"><img src="https://cheyrotana.vercel.app/api/banner" width="100%" alt="Hey, I'm Chey Rotana. Mobile and full-stack developer, based in Phnom Penh" /></a>
 </p>
 
 <p align="center">

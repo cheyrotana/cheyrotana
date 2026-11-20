@@ -1,4 +1,4 @@
-// Usage: node scripts/generate-svgs.js assets   (then node scripts/set-phase.js to pick the banner)
+// Usage: node scripts/generate-svgs.js assets
 // Generates the Persona-themed profile SVGs (day/night banners, footer, section signs, journey line),
 // matching the Persona theme of the portfolio (cheyrotana/Portfolio). Edit the text or colours
 // below, re-run, then commit the changed files in assets/.
@@ -119,8 +119,8 @@ function stars(n, W, H, seed, avoid = () => false, op = 0.9) {
 const halftone = (id, x, y, w, h, angle = 135) => `<pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="6" cy="6" r="1.8" fill="${BLACK}"/></pattern>`;
 
 // ---------- banner ----------
-// One scene per time of day in Phnom Penh. scripts/set-phase.js picks which one the README shows,
-// and .github/workflows/day-night.yml runs it every hour.
+// One scene per time of day in Phnom Penh. The README loads https://cheyrotana.vercel.app/api/banner,
+// which serves the scene for the current Phnom Penh time (cheyrotana/Portfolio, my-app/api/banner.js).
 const SUN = '#ffd400';
 const PHASES = {
   dawn: {
